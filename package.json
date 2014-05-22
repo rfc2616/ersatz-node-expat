@@ -9,6 +9,7 @@
   "author": "Etienne Rossignon",
   "license": "MIT",
   "devDependencies": {
+    "mocha": "^1.19.0",
     "node-expat": "^2.2.0",
     "should": "^3.3.1"
   },
