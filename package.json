@@ -1,0 +1,15 @@
+{
+  "name": "ersatz-node-expat",
+  "version": "0.0.1",
+  "description": "node-expat compatible module using only javascript ( no libexpat)",
+  "main": "lib.js",
+  "scripts": {
+    "test": "mocha -R spec "
+  },
+  "author": "Etienne Rossignon",
+  "license": "MIT",
+  "devDependencies": {
+    "node-expat": "^2.2.0",
+    "should": "^3.3.1"
+  }
+}
