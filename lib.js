@@ -79,7 +79,7 @@ var Parser2 = function () {
     this._xml = new xml_lite.XMLParser();
     this._stack =[];
 
-};
+
 util.inherits(Parser2, EventEmitter);
 
 Parser2.prototype.write = function (str) {

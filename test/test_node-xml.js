@@ -37,6 +37,7 @@ describe("compare node-expat  and erstatz-node-expat", function () {
 
         var xml_string = require("fs").readFileSync(__dirname + "/demo.xml");
         parser.write(xml_string);
+        parser.end();
 
         return infos;
     }
