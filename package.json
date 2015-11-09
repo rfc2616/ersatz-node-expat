@@ -14,6 +14,6 @@
   },
   "dependencies": {
     "bomstrip": "^0.1.4",
-    "node-xml": "^1.0.2",
+    "node-xml": "^1.0.2"
   }
 }
