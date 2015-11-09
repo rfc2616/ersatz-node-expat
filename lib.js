@@ -23,12 +23,15 @@ var Parser = function (encoding) {
 
     var self = this;
     var xml = require("node-xml");
+
+
     self._xml = new xml.SaxParser(function (cb) {
 
         cb.onStartDocument(function () {
 
         });
         cb.onEndDocument(function () {
+            self._text = "";
             self.emit("close");
         });
         cb.onStartElementNS(function (elem, attrs, prefix, uri, namespaces) {
@@ -42,7 +45,7 @@ var Parser = function (encoding) {
                 chars.split("\n").forEach(function (chunk) {
                     self.emit("text", chunk);
                 });
-
+                self._text = "";
             }
             self.emit("endElement", elem);
         });

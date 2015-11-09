@@ -50,9 +50,13 @@ describe("compare node-expat  and erstatz-node-expat", function () {
     if (expat) {
         it("node-expat", function () {
             var xml_string = require("fs").readFileSync(__dirname + "/demo.xml");
-            var infos1 = perform_test(expat, xml_string);
-            var infos2 = perform_test(ersatz, xml_string);
-            infos1.should.eql(infos2);
+            var infos_expat  = perform_test(expat, xml_string);
+            var infos_ersatz = perform_test(ersatz, xml_string);
+
+            console.log("infos_expat",infos_expat);
+            console.log("infos_expat",infos_ersatz);
+
+            infos_ersatz.should.eql(infos_expat);
 
         });
     }
