@@ -11,7 +11,7 @@ var EventEmitter = require("events").EventEmitter;
  */
 var Parser = function (encoding) {
 
-    this._text = [];
+    this._text = "";
 
     function _toMap(arr) {
         var m = {}
@@ -24,20 +24,29 @@ var Parser = function (encoding) {
     var self = this;
     var xml = require("node-xml");
 
+    var level = 0;
 
     self._xml = new xml.SaxParser(function (cb) {
 
         cb.onStartDocument(function () {
+            //xx console.log("onStartDocument");
 
         });
+
         cb.onEndDocument(function () {
-            self._text = "";
-            self.emit("close");
+            // be careful ! this event could be called at the end of a unterminated string , when data
+            // is written by chunk => we need to check that we are at the root level.
+            if (level === 0) {
+                self.emit("close");
+            }
         });
+
         cb.onStartElementNS(function (elem, attrs, prefix, uri, namespaces) {
-            self.emit("startElement", elem, _toMap(attrs));
+            level = level+1;
+            self.emit("startElement", elem, _toMap(attrs),prefix,uri,namespaces);
             self._text = "";
         });
+
         cb.onEndElementNS(function (elem, prefix, uri) {
 
             if (self._text.length >=0) {
@@ -47,11 +56,17 @@ var Parser = function (encoding) {
                 });
                 self._text = "";
             }
-            self.emit("endElement", elem);
+            //xx console.log("onEndElementNS");
+            self.emit("endElement", elem , prefix, uri);
+            level = level - 1;
+
         });
+
         cb.onCharacters(function (chars) {
+            ///xxx console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ",chars,self._text);
             self._text += chars;
         });
+
     });
 
 };

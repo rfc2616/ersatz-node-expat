@@ -1,4 +1,7 @@
 /*global require,describe, it*/
+var sinon = require("sinon");
+var should = require("should");
+
 var expat;
 try {
     expat = require('node-expat');
@@ -118,4 +121,46 @@ describe("compare node-expat  and erstatz-node-expat", function () {
         });
 
     });
+
+    it("should read a document sent by chunks",function() {
+
+
+        var spy_startElement = sinon.spy();
+        var spy_endElement = sinon.spy();
+        var spy_text       = sinon.spy();
+        var spy_error      = sinon.spy();
+
+        var parser = new ersatz.Parser('UTF-8');
+
+        parser.on('startElement', spy_startElement);
+
+        parser.on('endElement', spy_endElement);
+
+        parser.on('text', spy_text);
+
+        parser.on('error', spy_error);
+
+        parser.write("<ELE");
+        parser.write("MENT>");
+        parser.write("Hel");
+        parser.write("lo\nWo");
+        parser.write("rld<");
+        parser.write("/EL");
+        parser.write("EMENT>");
+        parser.end();
+
+        spy_error.callCount.should.eql(0);
+
+        spy_startElement.callCount.should.eql(1);
+        spy_startElement.getCall(0).args[0].should.eql("ELEMENT");
+
+        spy_endElement.callCount.should.eql(1);
+        spy_endElement.getCall(0).args[0].should.eql("ELEMENT");
+        spy_text.callCount.should.eql(2);
+        spy_text.getCall(0).args[0].should.eql("Hello");
+        spy_text.getCall(1).args[0].should.eql("World");
+
+
+    });
+
 });
