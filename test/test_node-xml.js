@@ -129,17 +129,18 @@ describe("compare node-expat  and erstatz-node-expat", function () {
         var spy_endElement = sinon.spy();
         var spy_text       = sinon.spy();
         var spy_error      = sinon.spy();
+        var spy_close      = sinon.spy();
 
         var parser = new ersatz.Parser('UTF-8');
 
         parser.on('startElement', spy_startElement);
-
         parser.on('endElement', spy_endElement);
-
         parser.on('text', spy_text);
-
         parser.on('error', spy_error);
+        parser.on('close', spy_close);
 
+        parser.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        parser.write("<ELEMENTS/>");
         parser.write("<ELE");
         parser.write("MENT>");
         parser.write("Hel");
@@ -150,15 +151,18 @@ describe("compare node-expat  and erstatz-node-expat", function () {
         parser.end();
 
         spy_error.callCount.should.eql(0);
+        spy_close.callCount.should.eql(1);
 
-        spy_startElement.callCount.should.eql(1);
-        spy_startElement.getCall(0).args[0].should.eql("ELEMENT");
+        spy_startElement.callCount.should.eql(2);
+        spy_startElement.getCall(1).args[0].should.eql("ELEMENT");
 
-        spy_endElement.callCount.should.eql(1);
-        spy_endElement.getCall(0).args[0].should.eql("ELEMENT");
-        spy_text.callCount.should.eql(2);
-        spy_text.getCall(0).args[0].should.eql("Hello");
-        spy_text.getCall(1).args[0].should.eql("World");
+        spy_endElement.callCount.should.eql(2);
+        spy_endElement.getCall(1).args[0].should.eql("ELEMENT");
+        spy_text.callCount.should.eql(3);
+        spy_text.getCall(0).args[0].should.eql("");
+        spy_text.getCall(1).args[0].should.eql("Hello");
+        spy_text.getCall(2).args[0].should.eql("World");
+
 
 
     });

@@ -24,7 +24,7 @@ var Parser = function (encoding) {
     var self = this;
     var xml = require("node-xml");
 
-    var level = 0;
+    self.level = 0;
 
     self._xml = new xml.SaxParser(function (cb) {
 
@@ -36,13 +36,10 @@ var Parser = function (encoding) {
         cb.onEndDocument(function () {
             // be careful ! this event could be called at the end of a unterminated string , when data
             // is written by chunk => we need to check that we are at the root level.
-            if (level === 0) {
-                self.emit("close");
-            }
         });
 
         cb.onStartElementNS(function (elem, attrs, prefix, uri, namespaces) {
-            level = level+1;
+            self.level += 1;
             self.emit("startElement", elem, _toMap(attrs),prefix,uri,namespaces);
             self._text = "";
         });
@@ -58,7 +55,7 @@ var Parser = function (encoding) {
             }
             //xx console.log("onEndElementNS");
             self.emit("endElement", elem , prefix, uri);
-            level = level - 1;
+            self.level -= 1;
 
         });
 
@@ -73,12 +70,18 @@ var Parser = function (encoding) {
 util.inherits(Parser, EventEmitter);
 
 Parser.prototype.write = function (str) {
+    var self = this;
+    str =str.toString();
     this._xml.parseString(str);
 };
 
 Parser.prototype.end = function (data) {
+    var self = this;
     if (data) {
         this.write(data);
+    }
+    if (self.level === 0) {
+        self.emit("close");
     }
 };
 
