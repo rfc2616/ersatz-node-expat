@@ -29,13 +29,10 @@ var Parser = function (encoding) {
     self._xml = new xml.SaxParser(function (cb) {
 
         cb.onStartDocument(function () {
-            //xx console.log("onStartDocument");
-
         });
 
         cb.onEndDocument(function () {
-            // be careful ! this event could be called at the end of a unterminated string , when data
-            // is written by chunk => we need to check that we are at the root level.
+          self.emit("end");
         });
 
         cb.onStartElementNS(function (elem, attrs, prefix, uri, namespaces) {
